@@ -536,7 +536,7 @@ function ProductCard({ product }) {
         {/* Text Details */}
         <div className="min-w-0 flex-1">
           <h3 className={cn(
-            "text-[13px] sm:text-sm font-bold truncate leading-snug transition-colors",
+            "text-[13px] sm:text-sm font-bold leading-snug transition-colors",
             isOutOfStock ? "text-[#D3D3D3]/50" : "text-white group-hover:text-[#F2A900]"
           )}>
             {product.name}
