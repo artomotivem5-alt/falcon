@@ -505,18 +505,11 @@ function SearchAndFilters({ query, setQuery, activeCategory, setActiveCategory }
 function ProductCard({ product }) {
   const { quantities, setQty, increment, decrement } = useCart();
   const qty = quantities[product.id] || 0;
-  const isOutOfStock = product.stock === 0;
-  const isLowStock = product.stock > 0 && product.stock <= 5;
 
   return (
-    <div className={cn(
-      "group relative flex items-center justify-between p-3 rounded-xl border border-white/[0.04] bg-[#1A1A1A] transition-all duration-300 gap-4",
-      isOutOfStock ? "opacity-60 border-dashed border-white/10" : "hover:border-[#F2A900]/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]"
-    )}>
+    <div className="group relative flex items-center justify-between p-3 rounded-xl border border-white/[0.04] bg-[#1A1A1A] transition-all duration-300 gap-4 hover:border-[#F2A900]/30 hover:shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
       {/* Top gradient highlight on hover */}
-      {!isOutOfStock && (
-        <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[#F2A900] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-      )}
+      <div className="absolute top-0 left-0 w-full h-[1.5px] bg-gradient-to-r from-transparent via-[#F2A900] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
       {/* Right side: Small Image & Details */}
       <div className="flex items-center gap-3 min-w-0">
@@ -529,36 +522,17 @@ function ProductCard({ product }) {
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
             />
           ) : (
-            <Package className={cn("h-5 w-5 transition-colors duration-500", isOutOfStock ? "text-[#3A3C40]" : "text-[#555] group-hover:text-[#F2A900]/60")} strokeWidth={1.5} />
+            <Package className="h-5 w-5 transition-colors duration-500 text-[#555] group-hover:text-[#F2A900]/60" strokeWidth={1.5} />
           )}
         </div>
 
         {/* Text Details */}
         <div className="min-w-0 flex-1">
-          <h3 className={cn(
-            "text-[13px] sm:text-sm font-bold leading-snug transition-colors",
-            isOutOfStock ? "text-[#D3D3D3]/50" : "text-white group-hover:text-[#F2A900]"
-          )}>
+          <h3 className="text-[13px] sm:text-sm font-bold leading-snug transition-colors text-white group-hover:text-[#F2A900]">
             {product.name}
           </h3>
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 mt-0.5">
             <span className="text-[10px] text-[#D3D3D3]/40 font-mono">كود: {product.id}</span>
-            {isOutOfStock ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-red-500/10 px-2 py-0.5 text-[9px] font-bold text-red-400 border border-red-500/20">
-                <span className="h-1.5 w-1.5 rounded-full bg-red-400" />
-                غير متوفر
-              </span>
-            ) : isLowStock ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2 py-0.5 text-[9px] font-bold text-amber-400 border border-amber-500/20 animate-pulse">
-                <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-                متبقي {product.stock}
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[9px] font-bold text-emerald-400 border border-emerald-500/20">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                متوفر
-              </span>
-            )}
           </div>
           {/* Price for mobile screens */}
           <div className="md:hidden mt-1 text-xs font-black text-[#F2A900]">
@@ -575,47 +549,38 @@ function ProductCard({ product }) {
           <span className="mr-0.5 text-[10px] font-bold text-[#F2A900]/70">ج.م</span>
         </span>
 
-        {/* Counter or Out of Stock Notification Button */}
-        {isOutOfStock ? (
+        {/* Counter */}
+        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-[#121212] p-1 shadow-inner w-[110px]">
           <button
-            onClick={() => alert(`سيتم إرسال إشعار لك فور توفر الصنف: ${product.name} (طلب ربط المخازن)`)}
-            className="flex h-9 px-2.5 items-center justify-center rounded-xl bg-white/[0.02] border border-white/5 hover:border-red-500/30 hover:bg-red-500/5 text-[#D3D3D3]/60 hover:text-red-400 text-[11px] font-bold transition-all duration-300 outline-none"
+            onClick={() => decrement(product.id)}
+            className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg bg-white/5 text-[#D3D3D3] transition-colors hover:bg-white/10 hover:text-white active:scale-95 outline-none"
           >
-            أعلمني بالتوفر
+            <Minus className="h-3 w-3" strokeWidth={2.5} />
           </button>
-        ) : (
-          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-[#121212] p-1 shadow-inner w-[110px]">
-            <button
-              onClick={() => decrement(product.id)}
-              className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg bg-white/5 text-[#D3D3D3] transition-colors hover:bg-white/10 hover:text-white active:scale-95 outline-none"
-            >
-              <Minus className="h-3 w-3" strokeWidth={2.5} />
-            </button>
-            <input
-              type="number"
-              value={qty || ""}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === "") {
-                  setQty(product.id, 0);
-                } else {
-                  const num = parseInt(val, 10);
-                  if (!isNaN(num) && num >= 0) {
-                    setQty(product.id, num);
-                  }
+          <input
+            type="number"
+            value={qty || ""}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val === "") {
+                setQty(product.id, 0);
+              } else {
+                const num = parseInt(val, 10);
+                if (!isNaN(num) && num >= 0) {
+                  setQty(product.id, num);
                 }
-              }}
-              className="w-full min-w-0 bg-transparent text-center text-xs font-black text-white outline-none border-none p-0 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              placeholder="0"
-            />
-            <button
-              onClick={() => increment(product.id)}
-              className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg bg-[#F2A900]/10 text-[#F2A900] transition-colors hover:bg-[#F2A900] hover:text-[#121212] active:scale-95 outline-none"
-            >
-              <Plus className="h-3 w-3" strokeWidth={2.5} />
-            </button>
-          </div>
-        )}
+              }
+            }}
+            className="w-full min-w-0 bg-transparent text-center text-xs font-black text-white outline-none border-none p-0 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            placeholder="0"
+          />
+          <button
+            onClick={() => increment(product.id)}
+            className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg bg-[#F2A900]/10 text-[#F2A900] transition-colors hover:bg-[#F2A900] hover:text-[#121212] active:scale-95 outline-none"
+          >
+            <Plus className="h-3 w-3" strokeWidth={2.5} />
+          </button>
+        </div>
       </div>
     </div>
   );
