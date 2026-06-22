@@ -906,6 +906,14 @@ function CartDrawer() {
                               <Plus className="h-4 w-4" strokeWidth={2.5} />
                             </button>
                           </div>
+
+                          <button
+                            onClick={() => setQty(item.id, 0)}
+                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-red-500/10 text-red-400 transition-all duration-200 hover:bg-red-500 hover:text-white active:scale-90 outline-none"
+                            title="إلغاء الصنف"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
                         </motion.div>
                       ))}
                     </AnimatePresence>
