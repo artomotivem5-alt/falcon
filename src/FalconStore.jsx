@@ -571,7 +571,12 @@ function ProductCard({ product }) {
                 }
               }
             }}
-            className="w-full min-w-0 bg-transparent text-center text-xs font-black text-white outline-none border-none p-0 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.currentTarget.blur();
+              }
+            }}
+            className="w-full min-w-0 bg-transparent text-center text-base md:text-xs font-black text-white outline-none border-none p-0 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             placeholder="0"
           />
           <button
@@ -896,7 +901,12 @@ function CartDrawer() {
                                   }
                                 }
                               }}
-                              className="w-full min-w-0 bg-transparent text-center text-sm font-bold text-white outline-none border-none p-0 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.currentTarget.blur();
+                                }
+                              }}
+                              className="w-full min-w-0 bg-transparent text-center text-base md:text-sm font-bold text-white outline-none border-none p-0 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                               placeholder="0"
                             />
                             <button
