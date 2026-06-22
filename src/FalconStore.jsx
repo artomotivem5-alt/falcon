@@ -144,11 +144,11 @@ function CartProvider({ products, children }) {
       lines.push(`${idx + 1}. ${item.name}`);
       lines.push(`   • الكود: ${item.id}`);
       lines.push(`   • الكمية: ${item.qty} قطعة`);
-      lines.push(`   • السعر: ${item.lineTotal.toLocaleString("ar-EG", { minimumFractionDigits: 3, maximumFractionDigits: 3 })} ج.م`);
+      lines.push(`   • السعر: ${item.lineTotal.toLocaleString("ar-EG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ج.م`);
       lines.push("");
     });
     lines.push("—————————————");
-    lines.push(`💰 *الإجمالي الكلي: ${totalPrice.toLocaleString("ar-EG", { minimumFractionDigits: 3, maximumFractionDigits: 3 })} ج.م*`);
+    lines.push(`💰 *الإجمالي الكلي: ${totalPrice.toLocaleString("ar-EG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ج.م*`);
     lines.push("");
     lines.push("برجاء تأكيد الطلب وموعد الاستلام. شكرًا 🦅");
     return lines.join("\n");
@@ -562,7 +562,7 @@ function ProductCard({ product }) {
           </div>
           {/* Price for mobile screens */}
           <div className="md:hidden mt-1 text-xs font-black text-[#F2A900]">
-            {product.price.toLocaleString("ar-EG", { minimumFractionDigits: 3, maximumFractionDigits: 3 })} <span className="text-[9px]">ج.م</span>
+            {product.price.toLocaleString("ar-EG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-[9px]">ج.م</span>
           </div>
         </div>
       </div>
@@ -571,7 +571,7 @@ function ProductCard({ product }) {
       <div className="flex items-center gap-3 shrink-0">
         {/* Price (Desktop) */}
         <span className="hidden md:block text-sm sm:text-base font-black text-[#F2A900] min-w-[70px] text-left">
-          {product.price.toLocaleString("ar-EG", { minimumFractionDigits: 3, maximumFractionDigits: 3 })}
+          {product.price.toLocaleString("ar-EG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           <span className="mr-0.5 text-[10px] font-bold text-[#F2A900]/70">ج.م</span>
         </span>
 
@@ -584,19 +584,33 @@ function ProductCard({ product }) {
             أعلمني بالتوفر
           </button>
         ) : (
-          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-[#121212] p-1 shadow-inner w-[90px]">
+          <div className="flex items-center justify-between rounded-xl border border-white/10 bg-[#121212] p-1 shadow-inner w-[110px]">
             <button
               onClick={() => decrement(product.id)}
-              className="flex h-7.5 w-7.5 items-center justify-center rounded-lg bg-white/5 text-[#D3D3D3] transition-colors hover:bg-white/10 hover:text-white active:scale-95 outline-none"
+              className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg bg-white/5 text-[#D3D3D3] transition-colors hover:bg-white/10 hover:text-white active:scale-95 outline-none"
             >
               <Minus className="h-3 w-3" strokeWidth={2.5} />
             </button>
-            <span className="text-xs font-black text-white w-4 text-center select-none">
-              {qty}
-            </span>
+            <input
+              type="number"
+              value={qty || ""}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "") {
+                  setQty(product.id, 0);
+                } else {
+                  const num = parseInt(val, 10);
+                  if (!isNaN(num) && num >= 0) {
+                    setQty(product.id, num);
+                  }
+                }
+              }}
+              className="w-full min-w-0 bg-transparent text-center text-xs font-black text-white outline-none border-none p-0 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              placeholder="0"
+            />
             <button
               onClick={() => increment(product.id)}
-              className="flex h-7.5 w-7.5 items-center justify-center rounded-lg bg-[#F2A900]/10 text-[#F2A900] transition-colors hover:bg-[#F2A900] hover:text-[#121212] active:scale-95 outline-none"
+              className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-lg bg-[#F2A900]/10 text-[#F2A900] transition-colors hover:bg-[#F2A900] hover:text-[#121212] active:scale-95 outline-none"
             >
               <Plus className="h-3 w-3" strokeWidth={2.5} />
             </button>
@@ -816,6 +830,7 @@ function CartDrawer() {
     totalPrice,
     increment,
     decrement,
+    setQty,
     checkoutUrl,
   } = useCart();
 
@@ -891,28 +906,37 @@ function CartDrawer() {
                             <p className="truncate text-[15px] font-bold text-white">{item.name}</p>
                             <p className="mt-0.5 text-xs text-[#D3D3D3]/70 font-medium">كود: {item.id}</p>
                             <p className="mt-1.5 text-sm font-black text-[#F2A900]">
-                              {item.lineTotal.toLocaleString("ar-EG", { minimumFractionDigits: 3, maximumFractionDigits: 3 })} <span className="text-[10px]">ج.م</span>
+                              {item.lineTotal.toLocaleString("ar-EG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-[10px]">ج.م</span>
                             </p>
                           </div>
 
-                          <div className="flex shrink-0 items-center gap-1.5 rounded-xl border border-white/10 bg-[#1A1A1A] p-1 shadow-inner">
+                          <div className="flex shrink-0 items-center gap-1.5 rounded-xl border border-white/10 bg-[#1A1A1A] p-1 shadow-inner w-[110px]">
                             <button
                               onClick={() => decrement(item.id)}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg text-[#D3D3D3]/70 transition-colors hover:bg-white/10 hover:text-white active:scale-90 outline-none"
+                              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[#D3D3D3]/70 transition-colors hover:bg-white/10 hover:text-white active:scale-90 outline-none"
                             >
                               <Minus className="h-4 w-4" strokeWidth={2.5} />
                             </button>
-                            <motion.span 
-                              key={item.qty}
-                              initial={{ y: -10, opacity: 0 }}
-                              animate={{ y: 0, opacity: 1 }}
-                              className="min-w-[2ch] text-center text-sm font-bold text-white tabular-nums"
-                            >
-                              {item.qty}
-                            </motion.span>
+                            <input
+                              type="number"
+                              value={item.qty || ""}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === "") {
+                                  setQty(item.id, 0);
+                                } else {
+                                  const num = parseInt(val, 10);
+                                  if (!isNaN(num) && num >= 0) {
+                                    setQty(item.id, num);
+                                  }
+                                }
+                              }}
+                              className="w-full min-w-0 bg-transparent text-center text-sm font-bold text-white outline-none border-none p-0 focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                              placeholder="0"
+                            />
                             <button
                               onClick={() => increment(item.id)}
-                              className="flex h-8 w-8 items-center justify-center rounded-lg text-[#D3D3D3]/70 transition-colors hover:bg-white/10 hover:text-white active:scale-90 outline-none"
+                              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[#D3D3D3]/70 transition-colors hover:bg-white/10 hover:text-white active:scale-90 outline-none"
                             >
                               <Plus className="h-4 w-4" strokeWidth={2.5} />
                             </button>
@@ -932,7 +956,7 @@ function CartDrawer() {
                       animate={{ scale: 1, color: "#F2A900" }}
                       className="text-2xl font-black drop-shadow-[0_0_10px_rgba(242,169,0,0.2)]"
                     >
-                      {totalPrice.toLocaleString("ar-EG", { minimumFractionDigits: 3, maximumFractionDigits: 3 })} <span className="text-sm">ج.م</span>
+                      {totalPrice.toLocaleString("ar-EG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <span className="text-sm">ج.م</span>
                     </motion.span>
                   </div>
 
